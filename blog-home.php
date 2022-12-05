@@ -1,4 +1,5 @@
 <?php
+  session_start();
   //Declare Variables
   $postID = '';
   $title = '';
@@ -34,11 +35,15 @@ $homePost = $pdo->query("SELECT * FROM Post ORDER BY postID DESC;");
 <body>
     <h1>CSUSM Blog StartUp</h1>
     <header class="header">
-        <a href="#" class="logo"><span>CSUSM</span>Blog</a>
+        <a href="blog-home.php" class="logo"><span>CSUSM</span>Blog</a>
         <nav class="navbar">
             <a href="blog-home.php">Home</a>
-            <a href="blog-create.html?v=2">My Post</a>
-            <a href="#profile">Profile</a>
+            <?php if (isset($_SESSION['username']) && isset($_SESSION['adminId'])): ?>
+              <a href="blog-create.php">Create Post</a>
+              <a href="user-logout.php">Logout</a>
+            <?php else: ?>
+              <a href="loginForm.html">Login</a>
+            <?php endif; ?>
         </nav>
         <form action="" class="search-form">
             <input type="search" placeholder="Search" id="search-box">
@@ -64,11 +69,10 @@ $homePost = $pdo->query("SELECT * FROM Post ORDER BY postID DESC;");
 
                 $date = $posts["updatedAt"];
 
-                $thumbnail = "images/";
-                $thumbnail = $thumbnail . strval($posts["thumbnail"]);
+                $thumbnail = $posts["thumbnail"];
 
                 echo "<div class='post'> <form action = 'articles/article.php' method = 'GET' > <input type = 'hidden' name = 'articleID' value = " . $postID . "> </input>";
-                echo "<input type = 'image' src='" . $thumbnail .  "' alt='Not found' onerror='this.src='images/CSUSM-icon.jpg'' class='image'> </input>";
+                echo "<input type='image' src='" . $thumbnail . "' alt='Not found' class='image'>";
                 echo "<div class='date'> <i class='far fa-clock'></i> <span>". $date ."</span> </div>";
                 echo "<h3 class='title'>" . $title . "</h3>";
                 echo "<p> " . $content . "</p>";
