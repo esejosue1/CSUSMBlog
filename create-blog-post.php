@@ -38,8 +38,9 @@
             die($message);
         }
 
-        // Generate random postId
-        $postID = rand();
+        $toppost = $pdo->query("SELECT * FROM Post ORDER BY postID DESC;");
+        $postID = $toppost->fetch()["postID"];
+        $postID = $postID + 1;
         // Get logged in user's adminId
         $adminID = $_SESSION['adminId'];
 
