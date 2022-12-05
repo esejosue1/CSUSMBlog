@@ -1,17 +1,17 @@
 <?php
+    session_start();
     $title = "";
     $subtitle = "";
     $content = "";
     $thumbnail = "";
 
-    // Check if it is POST request.
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if it is POST request and an admin is logged in.
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['username']) && isset($_SESSION['adminId'])) {
         // Get variables from form submission.
         $title = $_POST['title'];
         $subtitle = $_POST['subtitle'];
         $content = $_POST['content'];
-        // TODO: Replace with actual thumbnail from request
-        $thumbnail = "https://picsum.photos/200";
+        $thumbnail = $_POST['thumbnail'];
 
         // Validate form data.
         try {
@@ -38,10 +38,11 @@
             die($message);
         }
 
-        // Generate random postId
-        $postID = rand();
-        // Generate random adminID
-        $adminID = 11; // adminID for justinyum
+        $toppost = $pdo->query("SELECT * FROM Post ORDER BY postID DESC;");
+        $postID = $toppost->fetch()["postID"];
+        $postID = $postID + 1;
+        // Get logged in user's adminId
+        $adminID = $_SESSION['adminId'];
 
         // Get dates
         $createdAt = date("Y-m-d");

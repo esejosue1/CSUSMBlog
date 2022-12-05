@@ -1,5 +1,5 @@
 <?php
-
+  session_start();
   // Declare all variables the site will be using
   $postID = '';
   $response = '';
@@ -8,7 +8,7 @@
   $subtitle = '';
   $content = '';
   $date = '';
-  $thumbnail = "../images/";
+  $thumbnail = '';
 
   //Try to connect to SQL server
   try
@@ -49,7 +49,7 @@
 
           $date = $articledata["updatedAt"];
 
-          $thumbnail = $thumbnail . $articledata["thumbnail"];
+          $thumbnail = $articledata["thumbnail"];
         }
       }
 	 }
@@ -64,11 +64,15 @@
   <body>
     <!--beginning of banner-->
     <header class="header">
-        <a href="#" class="logo"><span>CSUSM</span>Blog</a>
+        <a href="../blog-home.php" class="logo"><span>CSUSM</span>Blog</a>
         <nav class="navbar">
             <a href="../blog-home.php">Home</a>
-            <a href="../blog-create.html?v=2">My Post</a>
-            <a href="#profile">Profile</a>
+            <?php if (isset($_SESSION['username']) && isset($_SESSION['adminId'])): ?>
+              <a href="../blog-create.php">Create Post</a>
+              <a href="../user-logout.php">Logout</a>
+            <?php else: ?>
+              <a href="../loginForm.html">Login</a>
+            <?php endif; ?>
         </nav>
     </header>
     <!--end of banner-->
@@ -81,9 +85,11 @@
     <section class = "container">
       <div class="post-container">
         <div class="post">
-          <div class="image">
-            <img src = <?php echo $thumbnail ?>> </img>
-          </div>
+          <?php if (isset($thumbnail) && !empty($thumbnail)): ?> 
+            <div class="image">
+              <img src=<?php echo $thumbnail ?> alt="Error loading image.">
+            </div>
+          <?php endif; ?>
           <h1> <?php echo $title ?> </h1>
           <h4> <?php echo $subtitle ?> </h4>
           <p> <?php echo $content ?> </p>
